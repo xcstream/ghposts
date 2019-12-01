@@ -1,0 +1,92 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+    <script src="https://cdn.bootcss.com/element-ui/2.12.0/index.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdn.bootcss.com/paho-mqtt/1.0.2/mqttws31.min.js"></script>
+    <link href="https://cdn.bootcss.com/element-ui/2.12.0/theme-chalk/index.css" rel="stylesheet">
+    <title>ghposts🕊</title>
+    <style>
+        *{
+            margin: 0;
+        }
+        .card{
+            width:400px;
+            height:300px;
+            margin:5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <el-card v-for="(i,index) in lists" class="card" @click.native="edit(index)">
+        <div v-if="editing!=index">
+            <div v-for="l in lists[index].split('\n')">
+                {{l}}
+            </div>
+        </div>
+        <div v-else>
+            <el-input style="font-size:18px" :rows='7'  type='textarea' v-model='lists[index]' >
+            </el-input>
+            <el-button @click='edit(null)' style="float: right;margin-top: 5px">save</el-button>
+        </div>
+
+    </el-card>
+</div>
+<script>
+    app = new Vue({
+        el:'#app',
+        data: {
+            lists:[],
+            editing:null
+        },
+        mounted:function () {
+
+        },
+        methods:{
+            edit:function (index) {
+                app.editing = index
+                if(index==null){
+                    setTimeout(function () {
+                       app.editing=null
+                        app.save()
+                    },5)
+                }
+            },
+            save:function () {
+                var payload = ({clientid: clientid,cmd:'save',data:JSON.stringify(app.lists)})
+                var message = new Paho.MQTT.Message(JSON.stringify(payload))
+                message.destinationName = default_topic
+                client.send(message)
+            }
+        }
+    })
+    var default_topic = 'xcstream.github.io/ghposts'
+    var default_topic_boardcast = 'xcstream.github.io/ghpost/boardcasts'
+    var clientid = ""+Math.random() + new Date().getTime()
+    var client = new Paho.MQTT.Client("j.appxc.com", Number(8084), clientid)
+    client.connect({useSSL:true, onSuccess:function(){
+            client.subscribe(clientid)
+            client.subscribe(default_topic_boardcast)
+            var payload = ({clientid: clientid,cmd:'init'})
+            var message = new Paho.MQTT.Message(JSON.stringify(payload))
+            message.destinationName = default_topic
+            client.send(message)
+        }})
+    client.onMessageArrived = function (message ) {
+        console.log('recv',message.payloadString)
+        var d = JSON.parse(message.payloadString)
+        if(d.cmd=='update'){
+            app.lists = d.data
+        }
+
+
+    }
+
+
+</script>
+</body>
+</html>
