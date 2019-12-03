@@ -4,7 +4,8 @@ var client  = mqtt.connect('mqtt://j.appxc.com')
 var default_topic = 'xcstream.github.io/ghposts'
 var default_topic_boardcast = 'xcstream.github.io/ghpost/boardcasts'
 var fs=require('fs')
-var storage = require('./storage')
+var storage = JSON.parse(fs.readFileSync('./storage.json'))
+
 client.on('connect', function () {
     client.subscribe(default_topic)
 })
