@@ -35,7 +35,6 @@ client.on('message', async function (topic, message) {
                 cmd:'update',
                 data:storage
             }
-            fs.writeFileSync(`storage.json`,JSON.stringify(storage))
             client.publish(default_topic_boardcast, JSON.stringify(tosend))
 
         }catch (e) {
@@ -45,4 +44,9 @@ client.on('message', async function (topic, message) {
     }
 
 })
+
+setInterval(  function () {
+        fs.writeFileSync(`storage.json`,JSON.stringify(storage))
+    },1000*60*60
+)
 
