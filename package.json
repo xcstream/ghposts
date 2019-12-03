@@ -1,0 +1,22 @@
+{
+  "name": "ghposts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ghserver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xcstream/ghposts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xcstream/ghposts/issues"
+  },
+  "homepage": "https://github.com/xcstream/ghposts#readme",
+  "dependencies": {
+    "mqtt": "^3.0.0"
+  }
+}
